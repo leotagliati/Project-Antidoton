@@ -1,65 +1,117 @@
 import { useState } from "react";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
+import { Calendar } from "primereact/calendar";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { Dropdown } from "primereact/dropdown";
+import { format } from "date-fns";
 
 function VaccineCard({ name }) {
-    // Mock data for demonstration purposes
-    const [age, setAge] = useState(25); // Default age for demonstration
-
+    const doseOptions = [
+        { label: '1ª Dose', value: '1ª Dose' },
+        { label: '2ª Dose', value: '2ª Dose' },
+        { label: '3ª Dose', value: '3ª Dose' },
+        { label: 'Dose Única', value: 'Dose Única' },
+        { label: 'Reforço', value: 'Reforço' },
+    ];
+    
     const [vaccines, setVaccines] = useState([
-        {
-            id: 1,
-            name: 'COVID-19',
-            date: '2023-05-10',
-            dose: '1ª Dose',
-        },
-        {
-            id: 2,
-            name: 'Hepatite B',
-            date: '2023-06-20',
-        },
-    ]);
+        
+      // mock data das vacinas
+    {
+      id: 1,
+      name: 'COVID-19',
+      date: new Date('2023-05-10'),
+      dose: '1ª Dose',
+    },
+    {
+      id: 2,
+      name: 'Hepatite B',
+      date: new Date('2023-06-20'),
+      dose: '2ª Dose',
+    },
+  ]);
+
+  const onRowEditComplete = (e) => {
+    let updatedVaccines = [...vaccines];
+    let { newData, index } = e;
+
+    updatedVaccines[index] = newData;
+    setVaccines(updatedVaccines);
+  };
+
+  const textEditor = (options) => {
     return (
-        <div>
-            <div>
-                <h3>Vacinas:</h3>
-                <table className="table table-bordered table-striped">
-                    <thead className="table-dark">
-                        <tr>
-                            <th>Nome da Vacina</th>
-                            <th>Dose</th>
-                            <th>Data</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
+      <InputText
+        type="text"
+        value={options.value}
+        onChange={(e) => options.editorCallback(e.target.value)}
+      />
+    );
+  };
 
-                            <InputText readOnly value="COVID-19" placeholder="Nome do Paciente" className="w-100 " />
-                            </td>
-                            
-                            <td>
-                                <InputText readOnly value="1ª Dose" className="w-100 " />
-                            </td>
-                            <td>
-                                <InputText readOnly value="22-03-2004" className="w-100 " />
-                            </td>
-                            <td>
-                                <Button className="btn btn-sm btn-warning me-2">✏️ Editar</Button>
-                                <Button className="btn btn-sm btn-danger">🗑️ Excluir</Button>
-                            </td>
-                        </tr>
-                        
-                    </tbody>
-                </table>
+  const doseEditor = (options) => {
+    return (
+      <Dropdown
+        value={options.value}
+        options={doseOptions}
+        onChange={(e) => options.editorCallback(e.value)}
+        placeholder="Selecione a dose"
+      />
+    );
+  };
 
-                <div className="mt-4">
-                    <button className="btn btn-primary">➕ Adicionar Nova Vacina</button>
-                </div>
-            </div>
-        </div>
-    )
+  const dateEditor = (options) => {
+    return (
+      <Calendar
+        value={options.value}
+        onChange={(e) => options.editorCallback(e.value)}
+        dateFormat="dd/mm/yy"
+        showIcon
+      />
+    );
+  };
+
+  const dateBodyTemplate = (rowData) => {
+    return format(new Date(rowData.date), 'dd/MM/yyyy');
+  };
+
+  return (
+    <div className="card p-4">
+      <DataTable
+        value={vaccines}
+        editMode="row"
+        dataKey="id"
+        className="p-datatable-sm"
+        onRowEditComplete={onRowEditComplete}
+      >
+        <Column
+          field="name"
+          header="Vacina"
+          editor={(options) => textEditor(options)}
+        />
+        <Column
+          field="dose"
+          header="Dose"
+          body={(rowData) => rowData.dose}
+          editor={(options) => doseEditor(options)}
+        />
+        <Column
+          field="date"
+          header="Data de Aplicação"
+          body={dateBodyTemplate}
+          editor={(options) => dateEditor(options)}
+        />
+        <Column
+          rowEditor
+          header="Ações"
+          headerStyle={{ width: '10%', minWidth: '8rem' }}
+          bodyStyle={{ textAlign: 'center' }}
+        />
+      </DataTable>
+    </div>
+  );
 }
 
 export default VaccineCard;
