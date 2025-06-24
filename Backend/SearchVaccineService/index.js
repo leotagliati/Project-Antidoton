@@ -62,6 +62,23 @@ app.put('/vaccines/update/:id', (req, res) => {
     };
     res.json(user.vaccines[vaccineIndex]);
 })
+app.delete('/vaccines/delete/:id', (req, res) => {
+    const { username } = req.body;
+    const vaccineId = parseInt(req.params.id);
+    if (!username) {
+        return res.status(400).json({ error: 'Username é obrigatório' });
+    }
+    const user = localDB.find(user => user.username === username);
+    if (!user) {
+        return res.status(404).json({ error: 'Usuário não encontrado' });
+    }
+    const vaccineIndex = user.vaccines.findIndex(v => v.id === vaccineId);
+    if (vaccineIndex === -1) {
+        return res.status(404).json({ error: 'Vacina não encontrada' });
+    }
+    user.vaccines.splice(vaccineIndex, 1);
+    res.status(200).send();
+});
 
 app.get('/vaccines', (req, res) => {
     const { username, vaccineName } = req.query;

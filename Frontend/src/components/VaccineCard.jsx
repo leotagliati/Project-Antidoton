@@ -18,19 +18,19 @@ function VaccineCard({ name }) {
   ];
 
   const [vaccines, setVaccines] = useState([]);
+  const [editingRows, setEditingRows] = useState({});
+
   useEffect(() => {
     const fetchedVaccines = async () => {
       try {
         const response = await clientVaccines.get('/vaccines', { params: { username: name } });
-        const data = response.data;
-        setVaccines(data);
-      }
-      catch (error) {
+        setVaccines(response.data);
+      } catch (error) {
         console.error('Error fetching vaccines:', error);
       }
-    }
+    };
     fetchedVaccines();
-  }, []);
+  }, [name]);
 
   const onRowEditComplete = (e) => {
     let updatedVaccines = [...vaccines];
@@ -44,47 +44,80 @@ function VaccineCard({ name }) {
       dose: newData.dose,
       date: format(newData.date, 'yyyy-MM-dd'),
     };
+
     clientVaccines.put(`/vaccines/update/${newData.id}`, {
       username: name,
       vaccineId: newData.id,
       vaccine: updatedVaccine,
+    });
+  };
+  
+
+
+  const onRowEditChange = (e) => {
+    setEditingRows(e.data);
+  };
+
+  const textEditor = (options) => (
+    <InputText
+      type="text"
+      value={options.value}
+      onChange={(e) => options.editorCallback(e.target.value)}
+    />
+  );
+  const doseEditor = (options) => (
+    <Dropdown
+      value={options.value}
+      options={doseOptions}
+      onChange={(e) => options.editorCallback(e.value)}
+      placeholder="Selecione a dose"
+    />
+  );
+
+  const dateEditor = (options) => (
+    <Calendar
+      value={options.value}
+      onChange={(e) => options.editorCallback(e.value)}
+      dateFormat="dd/mm/yy"
+      showIcon
+    />
+  );
+
+  const dateBodyTemplate = (rowData) => format(new Date(rowData.date), 'dd/MM/yyyy');
+
+  const handleAddVaccine = () => {
+    const newId = vaccines.length > 0 ? Math.max(...vaccines.map(v => v.id)) + 1 : 1;
+    const newVaccine = {
+      id: newId,
+      name: '',
+      dose: '',
+      date: new Date(),
+    };
+    const newVaccines = [...vaccines, newVaccine];
+    setVaccines(newVaccines);
+
+    setEditingRows({ [newVaccine.id]: true });
+    clientVaccines.post('/vaccines/add', {
+      username: name,
+      vaccine: {
+        name: newVaccine.name,
+        dose: newVaccine.dose,
+        date: format(newVaccine.date, 'yyyy-MM-dd'),
+      },
     })
   };
-
-  const textEditor = (options) => {
-    return (
-      <InputText
-        type="text"
-        value={options.value}
-        onChange={(e) => options.editorCallback(e.target.value)}
-      />
-    );
-  };
-
-  const doseEditor = (options) => {
-    return (
-      <Dropdown
-        value={options.value}
-        options={doseOptions}
-        onChange={(e) => options.editorCallback(e.value)}
-        placeholder="Selecione a dose"
-      />
-    );
-  };
-
-  const dateEditor = (options) => {
-    return (
-      <Calendar
-        value={options.value}
-        onChange={(e) => options.editorCallback(e.value)}
-        dateFormat="dd/mm/yy"
-        showIcon
-      />
-    );
-  };
-
-  const dateBodyTemplate = (rowData) => {
-    return format(new Date(rowData.date), 'dd/MM/yyyy');
+  const handleDeleteVaccine = (id) => {
+    const updatedVaccines = vaccines.filter(vaccine => vaccine.id !== id);
+    setVaccines(updatedVaccines);
+    clientVaccines.delete(`/vaccines/delete`, {
+      data: { username: name, vaccineId: id }
+    })
+      .then(() => {
+        console.log('Vaccine deleted successfully');
+      })
+      .catch((error) => {
+        console.error('Error deleting vaccine:', error);
+      });
   };
 
   return (
@@ -95,23 +128,25 @@ function VaccineCard({ name }) {
         dataKey="id"
         className="p-datatable-sm"
         onRowEditComplete={onRowEditComplete}
+        editingRows={editingRows}
+        onRowEditChange={onRowEditChange}
       >
         <Column
           field="name"
           header="Vacina"
-          editor={(options) => textEditor(options)}
+          editor={textEditor}
         />
         <Column
           field="dose"
           header="Dose"
           body={(rowData) => rowData.dose}
-          editor={(options) => doseEditor(options)}
+          editor={doseEditor}
         />
         <Column
           field="date"
           header="Data de Aplicação"
           body={dateBodyTemplate}
-          editor={(options) => dateEditor(options)}
+          editor={dateEditor}
         />
         <Column
           rowEditor
@@ -120,6 +155,14 @@ function VaccineCard({ name }) {
           bodyStyle={{ textAlign: 'center' }}
         />
       </DataTable>
+      <div className="flex justify-content-end mt-4">
+        <Button
+          label="Adicionar Vacina"
+          icon="pi pi-plus"
+          className="p-button-success"
+          onClick={handleAddVaccine}
+        />
+      </div>
     </div>
   );
 }
