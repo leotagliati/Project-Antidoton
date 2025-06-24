@@ -18,12 +18,13 @@ function VaccineCard({ name }) {
   ];
 
   const [vaccines, setVaccines] = useState([]);
-  const [editingRows, setEditingRows] = useState({});
 
   useEffect(() => {
     const fetchedVaccines = async () => {
       try {
-        const response = await clientVaccines.get('/vaccines', { params: { username: name } });
+        const response = await clientVaccines.get('/vaccines', {
+          params: { username: name }
+        });
         setVaccines(response.data);
       } catch (error) {
         console.error('Error fetching vaccines:', error);
@@ -33,29 +34,61 @@ function VaccineCard({ name }) {
   }, [name]);
 
   const onRowEditComplete = (e) => {
-    let updatedVaccines = [...vaccines];
-    let { newData, index } = e;
-
+    const { newData, index } = e;
+    const updatedVaccines = [...vaccines];
     updatedVaccines[index] = newData;
     setVaccines(updatedVaccines);
-
-    const updatedVaccine = {
-      name: newData.name,
-      dose: newData.dose,
-      date: format(newData.date, 'yyyy-MM-dd'),
-    };
 
     clientVaccines.put(`/vaccines/update/${newData.id}`, {
       username: name,
       vaccineId: newData.id,
-      vaccine: updatedVaccine,
+      vaccine: {
+        name: newData.name,
+        dose: newData.dose,
+        date: format(new Date(newData.date), 'yyyy-MM-dd'),
+      },
+    }).then(() => {
+      console.log('Vaccine updated successfully');
+    }).catch((error) => {
+      console.error('Error updating vaccine:', error);
     });
   };
-  
+
+  const handleAddVaccine = () => {
+    const newVaccine = {
+      name: '',
+      dose: '',
+      date: new Date(),
+    };
+
+    clientVaccines.post('/vaccines/add', {
+      username: name,
+      vaccine: {
+        name: newVaccine.name,
+        dose: newVaccine.dose,
+        date: format(newVaccine.date, 'yyyy-MM-dd'),
+      },
+    }).then(response => {
+      // Supondo que response.data é o objeto da vacina criada, com id incluído
+      const createdVaccine = response.data;
+      setVaccines((prev) => [...prev, createdVaccine]);
+    }).catch((error) => {
+      console.error('Error adding vaccine:', error);
+    });
+  };
 
 
-  const onRowEditChange = (e) => {
-    setEditingRows(e.data);
+  const handleDeleteVaccine = (id) => {
+    const updatedVaccines = vaccines.filter(vaccine => vaccine.id !== id);
+    setVaccines(updatedVaccines);
+
+    clientVaccines.delete(`/vaccines/delete/${id}`, {
+      data: { username: name, vaccineId: id },
+    }).then(() => {
+      console.log('Vaccine deleted successfully');
+    }).catch((error) => {
+      console.error('Error deleting vaccine:', error);
+    });
   };
 
   const textEditor = (options) => (
@@ -65,6 +98,7 @@ function VaccineCard({ name }) {
       onChange={(e) => options.editorCallback(e.target.value)}
     />
   );
+
   const doseEditor = (options) => (
     <Dropdown
       value={options.value}
@@ -85,40 +119,15 @@ function VaccineCard({ name }) {
 
   const dateBodyTemplate = (rowData) => format(new Date(rowData.date), 'dd/MM/yyyy');
 
-  const handleAddVaccine = () => {
-    const newId = vaccines.length > 0 ? Math.max(...vaccines.map(v => v.id)) + 1 : 1;
-    const newVaccine = {
-      id: newId,
-      name: '',
-      dose: '',
-      date: new Date(),
-    };
-    const newVaccines = [...vaccines, newVaccine];
-    setVaccines(newVaccines);
-
-    setEditingRows({ [newVaccine.id]: true });
-    clientVaccines.post('/vaccines/add', {
-      username: name,
-      vaccine: {
-        name: newVaccine.name,
-        dose: newVaccine.dose,
-        date: format(newVaccine.date, 'yyyy-MM-dd'),
-      },
-    })
-  };
-  const handleDeleteVaccine = (id) => {
-    const updatedVaccines = vaccines.filter(vaccine => vaccine.id !== id);
-    setVaccines(updatedVaccines);
-    clientVaccines.delete(`/vaccines/delete`, {
-      data: { username: name, vaccineId: id }
-    })
-      .then(() => {
-        console.log('Vaccine deleted successfully');
-      })
-      .catch((error) => {
-        console.error('Error deleting vaccine:', error);
-      });
-  };
+  const actionBodyTemplate = (rowData) => (
+    <div className="flex gap-2 justify-content-center">
+      <Button
+        icon="pi pi-trash"
+        className="p-button-rounded p-button-danger p-button-text"
+        onClick={() => handleDeleteVaccine(rowData.id)}
+      />
+    </div>
+  );
 
   return (
     <div className="card p-4">
@@ -128,33 +137,22 @@ function VaccineCard({ name }) {
         dataKey="id"
         className="p-datatable-sm"
         onRowEditComplete={onRowEditComplete}
-        editingRows={editingRows}
-        onRowEditChange={onRowEditChange}
       >
-        <Column
-          field="name"
-          header="Vacina"
-          editor={textEditor}
-        />
-        <Column
-          field="dose"
-          header="Dose"
-          body={(rowData) => rowData.dose}
-          editor={doseEditor}
-        />
-        <Column
-          field="date"
-          header="Data de Aplicação"
-          body={dateBodyTemplate}
-          editor={dateEditor}
-        />
+        <Column field="name" header="Vacina" editor={textEditor} />
+        <Column field="dose" header="Dose" editor={doseEditor} />
+        <Column field="date" header="Data de Aplicação" body={dateBodyTemplate} editor={dateEditor} />
         <Column
           rowEditor
-          header="Ações"
-          headerStyle={{ width: '10%', minWidth: '8rem' }}
-          bodyStyle={{ textAlign: 'center' }}
+          header="Editar"
+          style={{ width: '4rem', textAlign: 'center' }}
+        />
+        <Column
+          header="Deletar"
+          body={actionBodyTemplate}
+          style={{ width: '5rem', textAlign: 'center' }}
         />
       </DataTable>
+
       <div className="flex justify-content-end mt-4">
         <Button
           label="Adicionar Vacina"

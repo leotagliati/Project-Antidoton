@@ -40,6 +40,7 @@ app.post('/vaccines/add', (req, res) => {
         ...vaccine
     };
     user.vaccines.push(newVaccine);
+    console.log(`sucessfully added vaccine with id ${newVaccine.id} for user ${username}`);
     res.status(201).json(newVaccine);
 })
 
@@ -60,6 +61,7 @@ app.put('/vaccines/update/:id', (req, res) => {
         ...user.vaccines[vaccineIndex],
         ...vaccine,
     };
+    console.log(`sucessfully updated vaccine with id ${vaccineId} for user ${username}`);
     res.json(user.vaccines[vaccineIndex]);
 })
 app.delete('/vaccines/delete/:id', (req, res) => {
@@ -77,6 +79,7 @@ app.delete('/vaccines/delete/:id', (req, res) => {
         return res.status(404).json({ error: 'Vacina não encontrada' });
     }
     user.vaccines.splice(vaccineIndex, 1);
+    console.log(`sucessfully deleted vaccine with id ${vaccineIndex} for user ${username}`);
     res.status(200).send();
 });
 
