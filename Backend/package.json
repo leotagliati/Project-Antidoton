@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:searchvaccinesService": "node SearchVaccineService/index.js --watch"
+    "start:searchvaccinesService": "node --watch SearchVaccineService/index.js "
   },
   "keywords": [],
   "author": "",
