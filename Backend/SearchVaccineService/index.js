@@ -43,6 +43,26 @@ app.post('/vaccines/add', (req, res) => {
     res.status(201).json(newVaccine);
 })
 
+app.put('/vaccines/update/:id', (req, res) => {
+    const { username, vaccineId, vaccine } = req.body;
+    if (!username || !vaccine) {
+        return res.status(400).json({ error: 'Username e vacina são obrigatórios' });
+    }
+    const user = localDB.find(user => user.username === username);
+    if (!user) {
+        return res.status(404).json({ error: 'Usuário não encontrado' });
+    }
+    const vaccineIndex = user.vaccines.findIndex(v => v.id === parseInt(vaccineId));
+    if (vaccineIndex === -1) {
+        return res.status(404).json({ error: 'Vacina não encontrada' });
+    }
+    user.vaccines[vaccineIndex] = {
+        ...user.vaccines[vaccineIndex],
+        ...vaccine,
+    };
+    res.json(user.vaccines[vaccineIndex]);
+})
+
 app.get('/vaccines', (req, res) => {
     const { username, vaccineName } = req.query;
 

@@ -38,6 +38,17 @@ function VaccineCard({ name }) {
 
     updatedVaccines[index] = newData;
     setVaccines(updatedVaccines);
+
+    const updatedVaccine = {
+      name: newData.name,
+      dose: newData.dose,
+      date: format(newData.date, 'yyyy-MM-dd'),
+    };
+    clientVaccines.put(`/vaccines/update/${newData.id}`, {
+      username: name,
+      vaccineId: newData.id,
+      vaccine: updatedVaccine,
+    })
   };
 
   const textEditor = (options) => {
