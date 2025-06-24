@@ -1,6 +1,8 @@
 const express = require('express');
 const axios = require('axios');
+const cors = require('cors');
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 const localDB = [
@@ -11,13 +13,13 @@ const localDB = [
             {
                 id: 1,
                 name: 'COVID-19',
-                data: '2023-05-10',
+                date: '2023-05-10',
                 dose: '1ª Dose',
             },
             {
                 id: 2,
                 name: 'Hepatite B',
-                data: '2023-06-20',
+                date: '2023-06-20',
                 dose: '2ª Dose',
             },
         ]

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Calendar } from "primereact/calendar";
@@ -6,32 +6,31 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Dropdown } from "primereact/dropdown";
 import { format } from "date-fns";
+import clientVaccines from '../utils/clientVaccines';
 
 function VaccineCard({ name }) {
-    const doseOptions = [
-        { label: '1ª Dose', value: '1ª Dose' },
-        { label: '2ª Dose', value: '2ª Dose' },
-        { label: '3ª Dose', value: '3ª Dose' },
-        { label: 'Dose Única', value: 'Dose Única' },
-        { label: 'Reforço', value: 'Reforço' },
-    ];
-    
-    const [vaccines, setVaccines] = useState([
-        
-      // mock data das vacinas
-    {
-      id: 1,
-      name: 'COVID-19',
-      date: new Date('2023-05-10'),
-      dose: '1ª Dose',
-    },
-    {
-      id: 2,
-      name: 'Hepatite B',
-      date: new Date('2023-06-20'),
-      dose: '2ª Dose',
-    },
-  ]);
+  const doseOptions = [
+    { label: '1ª Dose', value: '1ª Dose' },
+    { label: '2ª Dose', value: '2ª Dose' },
+    { label: '3ª Dose', value: '3ª Dose' },
+    { label: 'Dose Única', value: 'Dose Única' },
+    { label: 'Reforço', value: 'Reforço' },
+  ];
+
+  const [vaccines, setVaccines] = useState([]);
+  useEffect(() => {
+    const fetchedVaccines = async () => {
+      try {
+        const response = await clientVaccines.get('/vaccines', { params: { username: name } });
+        const data = response.data;
+        setVaccines(data);
+      }
+      catch (error) {
+        console.error('Error fetching vaccines:', error);
+      }
+    }
+    fetchedVaccines();
+  }, []);
 
   const onRowEditComplete = (e) => {
     let updatedVaccines = [...vaccines];
