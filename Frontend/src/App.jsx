@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import VaccineCard from './components/VaccineCard';
+import LoginPage from './LoginPage';
 
 function App() {
   const mockName = 'João da Silva';
@@ -8,15 +9,15 @@ function App() {
 
   return (
     <div>
-      <div>
+      {/* <div>
         <h1>Nome: {mockName}</h1>
         <h2>Idade: {mockAge}</h2>
         <h2>Gênero: {mockGender}</h2>
       </div>
 
       <h1>🩺 Cartão de Vacinação</h1>
-      <VaccineCard name={'defaultUser'}></VaccineCard>
-
+      <VaccineCard name={'defaultUser'}></VaccineCard> */}
+      <LoginPage></LoginPage>
     </div>
   );
 }
