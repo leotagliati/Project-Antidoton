@@ -7,24 +7,45 @@ import clientAuth from './utils/clientAuth';
 const LoginPage = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleSignIn = (e) => {
-        e.preventDefault();
-        clientAuth.post('/auth/signin', { username, password })
+        e.preventDefault()
+        setErrorMessage('')
+        if (!username || !password) {
+            setErrorMessage('Usuário e senha são obrigatórios');
+            return;
+        }
+        clientAuth.post('/auth/login', { username, password })
             .then(response => {
                 console.log('Login bem-sucedido:', response.data);
             })
             .catch(error => {
                 console.error('Erro ao fazer login:', error);
+                if (error.response && error.response.status === 401) {
+                    setErrorMessage('Usuário ou senha inválidos');
+                } else {
+                    setErrorMessage('Erro ao fazer login, tente novamente mais tarde');
+                }
             });
     };
     const handleSignUp = (e) => {
         e.preventDefault();
-        clientAuth.post('/auth/signup', { username, password })
+        setErrorMessage('')
+        if (!username || !password) {
+            setErrorMessage('Usuário e senha são obrigatórios');
+            return;
+        }
+        clientAuth.post('/auth/register', { username, password })
             .then(response => {
                 console.log('Cadastro bem-sucedido:', response.data);
             })
             .catch(error => {
+                if (error.response && error.response.status === 400) {
+                    setErrorMessage('Usuário já existe');
+                } else {
+                    setErrorMessage('Erro ao fazer cadastro, tente novamente mais tarde');
+                }
                 console.error('Erro ao fazer cadastro:', error);
             });
     };
@@ -56,6 +77,7 @@ const LoginPage = () => {
                         className="w-100"
                     />
                 </div>
+                {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
                 <div className='d-flex flex-row gap-2'>
                     <Button label="Entrar" icon="pi pi-sign-in" className="w-100 p-button-primary" onClick={handleSignIn} />
                     <Button label="Cadastrar" icon="pi pi-sign-up" className="w-100 p-button-primary" onClick={handleSignUp} />
