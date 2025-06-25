@@ -60,6 +60,7 @@ function registerUser(username, password) {
 
 // Rota de login
 app.post('/auth/login', (req, res) => {
+    console.log('-----------------------------------------------------')
     const { username, password } = req.body;
 
     if (!username || !password) {
@@ -79,12 +80,15 @@ app.post('/auth/login', (req, res) => {
                 });
         })
         .catch(err => {
+            console.error(`Login error: ${err.message}`);
             res.status(err.status || 500).json({ error: err.message });
         });
+    console.log('-----------------------------------------------------')
 });
 
 // Rota de registro
 app.post('/auth/register', (req, res) => {
+    console.log('-----------------------------------------------------')
     const { username, password } = req.body;
 
     if (!username || !password) {
@@ -106,10 +110,14 @@ app.post('/auth/register', (req, res) => {
         .catch(err => {
             res.status(err.status || 500).json({ error: err.message });
         });
+    console.log('-----------------------------------------------------')
 });
 
 // Inicialização do servidor
-app.listen(3001, () => {
+const port = 3001;
+app.listen(port, () => {
     console.clear();
-    console.log('Authentication Service is running on port 3001');
+    console.log('-----------------------------------------------------')
+    console.log(`Authentication Service is running on port ${port}`);
+    console.log('-----------------------------------------------------')
 });

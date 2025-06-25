@@ -14,32 +14,33 @@ const eventRoutes = {
 };
 
 app.post('/event', async (req, res) => {
+    console.log('----------------------------------------------------')
     const event = req.body;
     const eventType = event.type;
 
     if (eventRoutes[eventType]) {
-        console.log(`Microsserviços ouvindo o evento '${eventType}':`, eventRoutes[eventType]);
+        console.log(`Listeners for the event '${eventType}':`, eventRoutes[eventType]);
         try {
             const promises = eventRoutes[eventType].map(({ service }) => {
                 const { port } = services[service];
                 const url = `http://localhost:${port}/event`;
-                // console.log(`Enviando evento '${eventType}' para o microsserviço: ${service} na rota: ${url}`);
                 return axios.post(url, event);
             });
 
             await Promise.all(promises);
 
-            console.log(`Evento '${eventType}' enviado com sucesso para os microsserviços ouvintes.`);
+            console.log(`Event '${eventType}' sent to listeners services.`);
         }
         catch (err) {
-            console.error(`Erro ao enviar evento '${eventType}':`, err.message);
+            console.error(`Error sending event '${eventType}':`, err.message);
 
         }
     }
     else {
-        console.log(`Nenhum microsserviço ouvindo o evento '${eventType}'`);
+        console.log(`There's no listener for '${eventType}'`);
     }
-    res.status(200).send({ status: 'Evento processado com sucesso.' });
+    console.log('----------------------------------------------------')
+    res.status(200).send({ status: 'Event processed successfully.' });
 });
 
 const port = 3002

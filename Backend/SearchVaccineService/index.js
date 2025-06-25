@@ -26,6 +26,7 @@ const localDB = [
     ,
 ]
 app.post('/vaccines/add', (req, res) => {
+    console.log('----------------------------------------------------');
     const { username, vaccine } = req.body;
     if (!username || !vaccine) {
         console.error('Username or vaccine data is missing');
@@ -43,9 +44,11 @@ app.post('/vaccines/add', (req, res) => {
     user.vaccines.push(newVaccine);
     console.log(`sucessfully added vaccine with id ${newVaccine.id} for user ${username}`);
     res.status(201).json(newVaccine);
+    console.log('----------------------------------------------------');
 })
 
 app.put('/vaccines/update/:id', (req, res) => {
+    console.log('----------------------------------------------------');
     const { username, vaccineId, vaccine } = req.body;
     if (!username || !vaccine) {
         return res.status(400).json({ error: 'Username e vacina são obrigatórios' });
@@ -64,8 +67,10 @@ app.put('/vaccines/update/:id', (req, res) => {
     };
     console.log(`sucessfully updated vaccine with id ${vaccineId} for user ${username}`);
     res.json(user.vaccines[vaccineIndex]);
+    console.log('----------------------------------------------------');
 })
 app.delete('/vaccines/delete/:id', (req, res) => {
+    console.log('----------------------------------------------------');
     const { username } = req.body;
     const vaccineId = parseInt(req.params.id);
     if (!username) {
@@ -82,9 +87,11 @@ app.delete('/vaccines/delete/:id', (req, res) => {
     user.vaccines.splice(vaccineIndex, 1);
     console.log(`sucessfully deleted vaccine with id ${vaccineIndex} for user ${username}`);
     res.status(200).send();
+    console.log('----------------------------------------------------');
 });
 
 app.get('/vaccines', (req, res) => {
+    console.log('----------------------------------------------------');
     const { username, vaccineName } = req.query;
 
     if (!username) {
@@ -103,8 +110,10 @@ app.get('/vaccines', (req, res) => {
     }
     console.log(`retrieved ${vaccines.length} vaccines for user "${username}" with filter "${vaccineName || 'none'}"`);
     res.json(vaccines);
+    console.log('----------------------------------------------------');
 });
 app.get('/vaccines/search', (req, res) => {
+    console.log('----------------------------------------------------');
     const { username, vaccineName } = req.query;
 
     if (!username || !vaccineName) {
@@ -122,9 +131,11 @@ app.get('/vaccines/search', (req, res) => {
 
     console.log(`searching "${vaccineName}" for user "${username}", found ${vaccines.length}`);
     res.json(vaccines);
+    console.log('----------------------------------------------------');
 });
 
 app.post('/event', async (req, res) => {
+    console.log('----------------------------------------------------');
     const event = req.body;
     const eventType = event.type;
     if (eventType === 'UserRegistered') {
@@ -155,9 +166,17 @@ app.post('/event', async (req, res) => {
         }
         res.status(200).send({ status: 'Event processed successfully.' });
     }
-    
+    else {
+        console.log(`No handler for event type: ${eventType}`);
+        res.status(400).send({ error: 'Event type not supported' });
+    }
+    console.log('----------------------------------------------------');
 });
 
-app.listen(3000, () => {
-    console.log('Server is running on port 3000');
+const port = 3000;
+app.listen(port, () => {
+    console.clear();
+    console.log('----------------------------------------------------');
+    console.log(`'Search Vaccine Service' running at port ${port}`);
+    console.log('----------------------------------------------------');
 });
