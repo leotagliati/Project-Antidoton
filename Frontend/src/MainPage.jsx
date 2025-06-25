@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import VaccineCard from './VaccineCard';
+import VaccineCard from './components/VaccineCard';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import clientVaccines from './utils/clientVaccines';

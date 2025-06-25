@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
-import VaccineCard from './VaccineCard';
 import LoginPage from './LoginPage';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import './datatable-grid.css'
+import './components/datatable-grid.css'
 import { MainPage } from './MainPage';
 
 
