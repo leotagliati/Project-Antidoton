@@ -8,7 +8,6 @@ app.use(express.json());
 const localDB = [
     {
         username: 'defaultUser',
-        age: 25,
         vaccines: [
             {
                 id: 1,
