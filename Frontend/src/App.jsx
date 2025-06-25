@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react'
 import VaccineCard from './components/VaccineCard';
 import LoginPage from './LoginPage';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import './datatable-grid.css'
 
 
 function App() {
-  const mockName = 'João da Silva';
+  const mockName = 'defaultUser'; // Mock username for testing
 
   return (
     <div>

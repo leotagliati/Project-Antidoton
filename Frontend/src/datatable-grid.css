@@ -1,0 +1,29 @@
+/* datatable-grid.css */
+.p-datatable .p-datatable-thead>tr>th,
+.p-datatable .p-datatable-tbody>tr>td {
+  border: 1px solid #ccc !important;
+}
+
+.p-datatable .p-datatable-thead>tr,
+.p-datatable .p-datatable-tbody>tr {
+  border-bottom: 1px solid #ccc;
+}
+
+.p-datatable .p-datatable-tbody {
+  border-top: 1px solid #ccc;
+}
+
+.p-datatable .p-datatable-tbody>tr:nth-child(even) {
+  background-color: #f0f4f8 !important;
+}
+
+.p-datatable .p-datatable-tbody>tr:hover {
+  background-color: #e1ecf4 !important;
+}
+
+.p-datatable .p-datatable-thead>tr>th {
+  background-color: #007bff !important;
+  color: white !important;
+  font-weight: bold;
+  text-align: center;
+}
