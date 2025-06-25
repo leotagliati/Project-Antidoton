@@ -24,9 +24,11 @@ const LoginPage = () => {
                 localStorage.setItem('username', username);
 
                 if (response.data.user.isAdmin) {
+                    localStorage.setItem('isAdmin', 'true');
                     navigate('/admin', { replace: true });
                 }
                 else {
+                    localStorage.setItem('isAdmin', 'false');
                     navigate('/dashboard', { replace: true });
                 }
             })

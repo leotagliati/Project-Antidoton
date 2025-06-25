@@ -116,6 +116,20 @@ app.post('/auth/register', (req, res) => {
     console.log('-----------------------------------------------------')
 });
 
+// Rota para obter todos os usuários (apenas para administradores)
+app.get('/users', (req, res) => {
+    console.log('-----------------------------------------------------')
+    const isAdmin = req.query.isAdmin === 'true';
+    if (!isAdmin) {
+        return res.status(403).json({ error: 'Access denied' });
+    }
+    res.status(200).json(localDB.map(user => ({
+        username: user.username,
+        isAdmin: user.isAdmin
+    })));
+    console.log('-----------------------------------------------------')
+});
+
 // Inicialização do servidor
 const port = 3001;
 app.listen(port, () => {
