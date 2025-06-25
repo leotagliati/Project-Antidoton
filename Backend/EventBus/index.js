@@ -1,17 +1,16 @@
-require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 const app = express();
 app.use(express.json());
 
 const services = {
-    authenticationService: { port: 3001 },
-    userLoginService: { port: 3002 },
+    searchVaccinesService: { port: 3000 },
+    userLoginService: { port: 3001 },
 };
 
 const eventRoutes = {
-    UserRegistered: [{ service: 'authenticationService' }],
-    UserLogged: [{ service: 'authenticationService' }],
+    UserRegistered: [{ service: 'searchVaccinesService' }],
+    UserLogged: [{ service: 'searchVaccinesService' }],
 };
 
 app.post('/event', async (req, res) => {
@@ -43,7 +42,7 @@ app.post('/event', async (req, res) => {
     res.status(200).send({ status: 'Evento processado com sucesso.' });
 });
 
-const port = process.env.BUS_PORT
+const port = 3002
 app.listen(port, () => {
     console.clear();
     console.log('----------------------------------------------------')

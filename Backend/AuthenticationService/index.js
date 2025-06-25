@@ -1,68 +1,115 @@
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
+const axios = require('axios');
 const saltRounds = 10;
+
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Banco de dados local simulado
 const localDB = [
     {
         username: 'defaultUser',
-        password: 'defaultPassword'
+        password: bcrypt.hashSync('defaultPassword', saltRounds) // senha já criptografada
     }
-]
-app.post('/auth/login', (req, res) => {
-    const { username, password } = req.body;
-    if (!username || !password) {
-        return res.status(400).json({ error: 'Username and password are required' });
-    }
-    const user = localDB.find(user => user.username === username);
-    if (!user) {
-        return res.status(404).json({ error: 'User not found' });
-    }
-    // password check
-    bcrypt.compare(password, user.password, (err, result) => {
-        if (err) {
-            console.error(`Error comparing passwords for user ${username}:`, err);
-            return res.status(500).json({ error: 'Error comparing passwords' });
+];
+
+// Função para login (Promise)
+function logUser(username, password) {
+    return new Promise((resolve, reject) => {
+        const user = localDB.find(user => user.username === username);
+        if (!user) {
+            return reject({ status: 404, message: 'User not found' });
         }
-        if (!result) {
-            return res.status(401).json({ error: 'Invalid password' });
-        }
-        console.log(`User ${username} logged in successfully`);
-        res.status(200).json({
-            message: 'Login successful', user: { username: user.username }
+
+        bcrypt.compare(password, user.password, (err, result) => {
+            if (err) return reject({ status: 500, message: 'Error comparing passwords' });
+            if (!result) return reject({ status: 401, message: 'Invalid password' });
+
+            console.log(`User ${username} logged in successfully`);
+            resolve({ username: user.username });
         });
     });
+}
 
-})
-app.post('/auth/register', (req, res) => {
+// Função para registro (Promise)
+function registerUser(username, password) {
+    return new Promise((resolve, reject) => {
+        const exists = localDB.find(user => user.username === username);
+        if (exists) {
+            return reject({ status: 400, message: 'Username already exists' });
+        }
+
+        bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
+            if (err) return reject({ status: 500, message: 'Error hashing password' });
+
+            const newUser = {
+                id: localDB.length + 1,
+                username,
+                password: hashedPassword
+            };
+
+            localDB.push(newUser);
+            console.log(`User ${username} registered successfully`);
+            resolve({ username: newUser.username });
+        });
+    });
+}
+
+// Rota de login
+app.post('/auth/login', (req, res) => {
     const { username, password } = req.body;
+
     if (!username || !password) {
         return res.status(400).json({ error: 'Username and password are required' });
     }
 
-    const user = localDB.find(user => user.username === username);
-    if (user) {
-        return res.status(400).json({ error: 'Username already exists' });
+    logUser(username, password)
+        .then(user => {
+            const event = {
+                type: 'UserLogged',
+                username: user.username
+            };
+            return axios.post('http://localhost:3002/event', event)
+                .then(() => {
+                    console.log(`Event sent: ${event.type}`);
+                    res.status(200).json({ message: 'Login successful', user });
+                });
+        })
+        .catch(err => {
+            res.status(err.status || 500).json({ error: err.message });
+        });
+});
+
+// Rota de registro
+app.post('/auth/register', (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ error: 'Username and password are required' });
     }
-    const newUser = {
-        id: localDB.length + 1,
-        username: username,
-        password: bcrypt.hashSync(password, saltRounds)
-    };
-    localDB.push(newUser);
-    console.log(`User ${username} registered successfully`);
 
-    res.status(201).json({
-        message: 'User registered successfully', user: newUser.username
+    registerUser(username, password)
+        .then(user => {
+            const event = {
+                type: 'UserRegistered',
+                username: user.username
+            };
+            return axios.post('http://localhost:3002/event', event)
+                .then(() => {
+                    console.log(`Event sent: ${event.type}`);
+                    res.status(201).json({ message: 'User registered successfully', user });
+                });
+        })
+        .catch(err => {
+            res.status(err.status || 500).json({ error: err.message });
+        });
+});
 
-
-    })
-})
-
+// Inicialização do servidor
 app.listen(3001, () => {
     console.clear();
     console.log('Authentication Service is running on port 3001');
-})
+});
