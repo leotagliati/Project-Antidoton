@@ -4,6 +4,7 @@ import { Button } from 'primereact/button';
 import clientAuth from './utils/clientAuth';
 import UsersSheet from './components/UsersSheet';
 import VaccinesSheet from './components/VaccinesSheet';
+import clientVaccines from './utils/clientVaccines';
 
 export const AdminPage = () => {
   const mockCompanyName = 'nomeEmpresa';
@@ -42,7 +43,7 @@ export const AdminPage = () => {
   };
 
   const fetchVaccines = () => {
-    clientAuth.get('/vaccines')
+    clientVaccines.get('/vaccines')
       .then(response => {
         setVaccines(response.data);
       })
@@ -57,10 +58,12 @@ export const AdminPage = () => {
 
   const handleUsersButton = () => {
     setActiveSheet('users');
+    fetchUsers();
   };
 
   const handleVaccinesButton = () => {
     setActiveSheet('vaccines');
+    fetchVaccines();
   };
 
   const onRowEditComplete = (e) => {

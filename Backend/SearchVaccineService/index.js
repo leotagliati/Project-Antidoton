@@ -155,6 +155,30 @@ app.get('/vaccinations/search', (req, res) => {
     console.log('----------------------------------------------------');
 });
 
+app.get('/vaccines', (req, res) => {
+    console.log('----------------------------------------------------');
+    console.log('Retrieving all available vaccines');
+    res.json(localVaccinesDB);
+    console.log(`Found ${localVaccinesDB.length} vaccines`);
+    console.log('----------------------------------------------------');
+});
+app.post('/vaccines/add', (req, res) => {
+    console.log('----------------------------------------------------');
+    const { name } = req.body;
+    if (!name) {
+        return res.status(400).json({ error: 'Nome da vacina é obrigatório' });
+    }
+    const newVaccine = {
+        id: localVaccinesDB.length + 1,
+        name: name,
+    };
+    localVaccinesDB.push(newVaccine);
+    console.log(`sucessfully added vaccine "${newVaccine.name}"`);
+    res.status(201).json(newVaccine);
+    console.log('----------------------------------------------------');
+});
+
+
 app.post('/event', async (req, res) => {
     console.log('----------------------------------------------------');
     const event = req.body;
