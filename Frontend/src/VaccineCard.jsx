@@ -6,7 +6,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Dropdown } from "primereact/dropdown";
 import { format } from "date-fns";
-import clientVaccines from "../utils/clientVaccines";
+import clientVaccines from "./utils/clientVaccines";
 
 function VaccineCard({ name }) {
   const doseOptions = [
