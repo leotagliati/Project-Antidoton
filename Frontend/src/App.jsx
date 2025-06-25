@@ -9,10 +9,13 @@ function App() {
 
   return (
     <div>
-      <Routes>
-        <Route path="/dashboard" element={<VaccineCard/>} />
-        <Route path="/" element={<LoginPage />} />
-      </Routes>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/dashboard" element={<VaccineCard name={mockName} />} />
+          <Route path="/" element={<LoginPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }

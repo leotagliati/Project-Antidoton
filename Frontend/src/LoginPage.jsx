@@ -3,8 +3,10 @@ import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import { Button } from 'primereact/button';
 import clientAuth from './utils/clientAuth';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
+    const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -19,6 +21,7 @@ const LoginPage = () => {
         clientAuth.post('/auth/login', { username, password })
             .then(response => {
                 console.log('Login bem-sucedido:', response.data);
+                navigate('/dashboard', { replace: true });
             })
             .catch(error => {
                 console.error('Erro ao fazer login:', error);
@@ -39,6 +42,7 @@ const LoginPage = () => {
         clientAuth.post('/auth/register', { username, password })
             .then(response => {
                 console.log('Cadastro bem-sucedido:', response.data);
+                navigate('/dashboard', { replace: true });
             })
             .catch(error => {
                 if (error.response && error.response.status === 400) {
