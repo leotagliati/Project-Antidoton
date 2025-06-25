@@ -130,6 +130,55 @@ app.get('/users', (req, res) => {
     console.log('-----------------------------------------------------')
 });
 
+// Somente admins podem utilizar a rota
+app.patch('/users/:username', (req, res) => {
+    console.log('-----------------------------------------------------')
+    const { username } = req.params;
+    const { role } = req.body;
+    if(role === 'admin')
+    {
+        const user = localDB.find(user => user.username === username);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        user.isAdmin = true;
+        console.log(`User ${username} updated to admin`);
+        res.status(200).json({ message: 'User updated successfully', user });
+    }
+    else if(role === 'user')
+    {
+        const user = localDB.find(user => user.username === username);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        user.isAdmin = false;
+        console.log(`User ${username} updated to user`);
+        res.status(200).json({ message: 'User updated successfully', user: user.username });
+    }
+    else {
+        return res.status(400).json({ error: 'Invalid role' });
+    }
+    console.log('-----------------------------------------------------')
+});
+
+// somente admins podem utilizar a rota
+app.delete('/users/:username', (req, res) => {
+    console.log('-----------------------------------------------------')
+    const { username } = req.params;
+    const isAdmin = req.query.isAdmin === 'true';
+    if (!isAdmin) {
+        return res.status(403).json({ error: 'Access denied' });
+    }
+    const userIndex = localDB.findIndex(user => user.username === username);
+    if (userIndex === -1) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+    localDB.splice(userIndex, 1);
+    console.log(`User ${username} deleted successfully`);
+    res.status(200).json({ message: 'User deleted successfully' });
+    console.log('-----------------------------------------------------')
+});
+
 // Inicialização do servidor
 const port = 3001;
 app.listen(port, () => {
