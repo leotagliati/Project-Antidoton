@@ -10,37 +10,39 @@ export const MainPage = () => {
     const username = localStorage.getItem('username') || 'defaultUser';
 
     const [searchTerm, setSearchTerm] = useState('');
-    const [vacinas, setVacinas] = useState([]);
+    const [vaccinations, setVaccinations] = useState([]);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchVacinasPorTermo = async () => {
-            if (searchTerm.trim() !== '') {
-                try {
-                    const response = await clientVaccines.get('/vaccinations/search', {
-                        params: { username: username, vaccineName: searchTerm }
-                    });
-                    setVacinas(response.data);
-                } catch (error) {
-                    console.error('Erro ao buscar vacinas:', error);
-                    setVacinas([]);
-                }
-            } else {
-                try {
-                    const response = await clientVaccines.get('/vaccinations', {
-                        params: { username: username }
-                    });
-                    setVacinas(response.data);
-                } catch (error) {
-                    console.error('Erro ao buscar vacinas:', error);
-                    setVacinas([]);
-                }
+    const fetchVaccinationsByTerm = async (username, searchTerm, setVaccinations) => {
+        if (searchTerm.trim() !== '') {
+            try {
+                const response = await clientVaccines.get('/vaccinations/search', {
+                    params: { username: username, vaccineName: searchTerm }
+                });
+                setVaccinations(response.data);
+            } catch (error) {
+                console.error('Erro ao buscar vacinas:', error);
+                setVaccinations([]);
             }
-        };
+        } else {
+            try {
+                const response = await clientVaccines.get('/vaccinations', {
+                    params: { username: username }
+                });
+                setVaccinations(response.data);
+            } catch (error) {
+                console.error('Erro ao buscar vacinas:', error);
+                setVaccinations([]);
+            }
+        }
+    };
+    useEffect(() => {
+    const debounce = setTimeout(() => {
+        fetchVaccinationsByTerm(username, searchTerm, setVaccinations);
+    }, 500);
 
-        const debounce = setTimeout(fetchVacinasPorTermo, 500);
-        return () => clearTimeout(debounce);
-    }, [searchTerm]);
+    return () => clearTimeout(debounce);
+}, [searchTerm, username]);
     const handleLogout = () => {
         navigate('/')
     }
@@ -62,7 +64,7 @@ export const MainPage = () => {
                 }
             });
 
-            setVacinas(prev => [...prev, response.data]);
+            setVaccinations(prev => [...prev, response.data]);
         } catch (error) {
             console.error('Erro ao adicionar vacina:', error);
         }
@@ -80,7 +82,7 @@ export const MainPage = () => {
                 }
             });
 
-            setVacinas(prev =>
+            setVaccinations(prev =>
                 prev.map(v => (v.id === novaVacina.id ? novaVacina : v))
             );
         } catch (error) {
@@ -93,7 +95,7 @@ export const MainPage = () => {
             await clientVaccines.delete(`/vaccinations/delete/${id}`, {
                 data: { username: username, vaccineId: id }
             });
-            setVacinas(prev => prev.filter(v => v.id !== id));
+            setVaccinations(prev => prev.filter(v => v.id !== id));
         } catch (error) {
             console.error('Erro ao deletar vacina:', error);
         }
@@ -113,7 +115,7 @@ export const MainPage = () => {
                     {/* Avatar */}
                     <img src="https://placehold.co/120x120" alt="Avatar" className="rounded-circle mb-3" />
                     <h5 className="text-center">{username}</h5>
-                    
+
                     {/* Botões de Navegação */}
                     <div className="d-flex flex-column flex-grow-1 mt-7 gap-2 w-100">
                         <Button className="p-button-secondary w-100">Minhas Vacinações</Button>
@@ -139,7 +141,7 @@ export const MainPage = () => {
                         </div>
                     </div>
 
-                    <VaccineCardSheet vacinas={vacinas} onEdit={handleEdit} onDelete={handleDelete} onAdd={handleAdd} />
+                    <VaccineCardSheet vaccines={vaccinations} onEdit={handleEdit} onDelete={handleDelete} onAdd={handleAdd} />
                 </div>
             </div>
         </div>

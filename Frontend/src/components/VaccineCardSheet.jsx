@@ -6,7 +6,7 @@ import { Column } from "primereact/column";
 import { Dropdown } from "primereact/dropdown";
 import { format } from "date-fns";
 
-function VaccineCardSheet({ vacinas, onEdit, onDelete, onAdd }) {
+function VaccineCardSheet({ vaccines, onEdit, onDelete, onAdd }) {
   const doseOptions = [
     { label: "1ª Dose", value: "1ª Dose" },
     { label: "2ª Dose", value: "2ª Dose" },
@@ -62,7 +62,7 @@ function VaccineCardSheet({ vacinas, onEdit, onDelete, onAdd }) {
   return (
     <div className="p-4 bg-white rounded-md shadow-md">
       <DataTable
-        value={vacinas}
+        value={vaccines}
         editMode="row"
         dataKey="id"
         onRowEditComplete={onRowEditComplete}
