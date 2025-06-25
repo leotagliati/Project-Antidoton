@@ -102,6 +102,25 @@ app.get('/vaccines', (req, res) => {
 
     res.json(vaccines);
 });
+app.get('/vaccines/search', (req, res) => {
+    const { username, vaccineName } = req.query;
+
+    if (!username || !vaccineName) {
+        return res.status(400).json({ error: 'Username e vaccineName são obrigatórios' });
+    }
+
+    const user = localDB.find(user => user.username === username);
+    if (!user) {
+        return res.status(404).json({ error: 'Usuário não encontrado' });
+    }
+
+    const vaccines = user.vaccines.filter(v =>
+        v.name.toLowerCase().includes(vaccineName.toLowerCase())
+    );
+
+    console.log(`searching "${vaccineName}" for user "${username}", found ${vaccines.length}`);
+    res.json(vaccines);
+});
 
 
 app.listen(3000, () => {
