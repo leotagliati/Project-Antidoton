@@ -21,6 +21,7 @@ const LoginPage = () => {
         clientAuth.post('/auth/login', { username, password })
             .then(response => {
                 console.log('Login bem-sucedido:', response.data);
+                localStorage.setItem('username', username);
                 navigate('/dashboard', { replace: true });
             })
             .catch(error => {

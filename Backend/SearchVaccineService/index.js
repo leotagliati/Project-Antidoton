@@ -127,13 +127,28 @@ app.get('/vaccines/search', (req, res) => {
 app.post('/event', async (req, res) => {
     const event = req.body;
     const eventType = event.type;
-    if (eventType === 'userRegistered') {
+    if (eventType === 'UserRegistered') {
         console.log(`Received event: ${eventType}`);
         try {
             localDB.push({
                 username: event.username,
                 vaccines: []
             });
+        }
+        catch (err) {
+            console.error(`Error processing event '${eventType}':`, err.message);
+        }
+        res.status(200).send({ status: 'Event processed successfully.' });
+    }
+    else if (eventType === 'UserLogged')
+    {
+        console.log(`Received event: ${eventType}`);
+        try {
+            const user = localDB.find(user => user.username === event.username);
+            if (!user) {
+                console.error(`User ${event.username} not found`);
+                return res.status(404).send({ error: 'Usuário não encontrado' });
+            }
         }
         catch (err) {
             console.error(`Error processing event '${eventType}':`, err.message);
