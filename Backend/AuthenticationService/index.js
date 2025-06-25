@@ -11,8 +11,10 @@ app.use(express.json());
 // Banco de dados local simulado
 const localDB = [
     {
-        username: 'defaultUser',
-        password: bcrypt.hashSync('defaultPassword', saltRounds) // senha já criptografada
+        id: 1,
+        username: 'admin',
+        password: bcrypt.hashSync('admin', saltRounds),
+        isAdmin: true
     }
 ];
 
@@ -29,7 +31,7 @@ function logUser(username, password) {
             if (!result) return reject({ status: 401, message: 'Invalid password' });
 
             console.log(`User ${username} logged in successfully`);
-            resolve({ username: user.username });
+            resolve({ username: user.username , isAdmin: user.isAdmin });
         });
     });
 }
@@ -48,7 +50,8 @@ function registerUser(username, password) {
             const newUser = {
                 id: localDB.length + 1,
                 username,
-                password: hashedPassword
+                password: hashedPassword,
+                isAdmin: false 
             };
 
             localDB.push(newUser);

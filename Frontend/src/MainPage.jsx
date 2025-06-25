@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import VaccineCard from './components/VaccineCard';
+import VaccineCardSheet from './components/VaccineCardSheet';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import clientVaccines from './utils/clientVaccines';
@@ -17,7 +17,7 @@ export const MainPage = () => {
         const fetchVacinasPorTermo = async () => {
             if (searchTerm.trim() !== '') {
                 try {
-                    const response = await clientVaccines.get('/vaccines/search', {
+                    const response = await clientVaccines.get('/vaccinations/search', {
                         params: { username: username, vaccineName: searchTerm }
                     });
                     setVacinas(response.data);
@@ -27,7 +27,7 @@ export const MainPage = () => {
                 }
             } else {
                 try {
-                    const response = await clientVaccines.get('/vaccines', {
+                    const response = await clientVaccines.get('/vaccinations', {
                         params: { username: username }
                     });
                     setVacinas(response.data);
@@ -53,7 +53,7 @@ export const MainPage = () => {
         };
 
         try {
-            const response = await clientVaccines.post('/vaccines/add', {
+            const response = await clientVaccines.post('/vaccinations/add', {
                 username: username,
                 vaccine: {
                     name: novaVacina.name,
@@ -70,7 +70,7 @@ export const MainPage = () => {
 
     const handleEdit = async (novaVacina) => {
         try {
-            await clientVaccines.put(`/vaccines/update/${novaVacina.id}`, {
+            await clientVaccines.put(`/vaccinations/update/${novaVacina.id}`, {
                 username: username,
                 vaccineId: novaVacina.id,
                 vaccine: {
@@ -90,7 +90,7 @@ export const MainPage = () => {
 
     const handleDelete = async (id) => {
         try {
-            await clientVaccines.delete(`/vaccines/delete/${id}`, {
+            await clientVaccines.delete(`/vaccinations/delete/${id}`, {
                 data: { username: username, vaccineId: id }
             });
             setVacinas(prev => prev.filter(v => v.id !== id));
@@ -116,9 +116,8 @@ export const MainPage = () => {
                     
                     {/* Botões de Navegação */}
                     <div className="d-flex flex-column flex-grow-1 mt-7 gap-2 w-100">
-                        <Button className="p-button-secondary w-100">Vacinas</Button>
-                        <Button className="p-button-secondary w-100">Agendamento</Button>
-                        <Button className="p-button-secondary w-100">Histórico</Button>
+                        <Button className="p-button-secondary w-100">Minhas Vacinações</Button>
+                        <Button className="p-button-secondary w-100">Todas as Vacinas</Button>
                     </div>
 
                     <Button className="p-button-danger" onClick={handleLogout}>Sair</Button>
@@ -140,7 +139,7 @@ export const MainPage = () => {
                         </div>
                     </div>
 
-                    <VaccineCard vacinas={vacinas} onEdit={handleEdit} onDelete={handleDelete} onAdd={handleAdd} />
+                    <VaccineCardSheet vacinas={vacinas} onEdit={handleEdit} onDelete={handleDelete} onAdd={handleAdd} />
                 </div>
             </div>
         </div>

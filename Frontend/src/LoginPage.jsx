@@ -22,7 +22,13 @@ const LoginPage = () => {
             .then(response => {
                 console.log('Login bem-sucedido:', response.data);
                 localStorage.setItem('username', username);
-                navigate('/dashboard', { replace: true });
+
+                if (response.data.user.isAdmin) {
+                    navigate('/admin', { replace: true });
+                }
+                else {
+                    navigate('/dashboard', { replace: true });
+                }
             })
             .catch(error => {
                 console.error('Erro ao fazer login:', error);

@@ -6,7 +6,7 @@ import { Column } from "primereact/column";
 import { Dropdown } from "primereact/dropdown";
 import { format } from "date-fns";
 
-function VaccineCard({ vacinas, onEdit, onDelete, onAdd }) {
+function VaccineCardSheet({ vacinas, onEdit, onDelete, onAdd }) {
   const doseOptions = [
     { label: "1ª Dose", value: "1ª Dose" },
     { label: "2ª Dose", value: "2ª Dose" },
@@ -99,4 +99,4 @@ function VaccineCard({ vacinas, onEdit, onDelete, onAdd }) {
   );
 }
 
-export default VaccineCard;
+export default VaccineCardSheet;
