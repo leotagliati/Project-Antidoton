@@ -28,10 +28,12 @@ const localDB = [
 app.post('/vaccines/add', (req, res) => {
     const { username, vaccine } = req.body;
     if (!username || !vaccine) {
+        console.error('Username or vaccine data is missing');
         return res.status(400).json({ error: 'Username e vacina são obrigatórios' });
     }
     const user = localDB.find(user => user.username === username);
     if (!user) {
+        console.error(`User ${username} not found`);
         return res.status(404).json({ error: 'Usuário não encontrado' });
     }
     const newVaccine = {
@@ -99,7 +101,7 @@ app.get('/vaccines', (req, res) => {
     if (vaccineName) {
         vaccines = vaccines.filter(v => v.name.toLowerCase().includes(vaccineName.toLowerCase()));
     }
-
+    console.log(`retrieved ${vaccines.length} vaccines for user "${username}" with filter "${vaccineName || 'none'}"`);
     res.json(vaccines);
 });
 app.get('/vaccines/search', (req, res) => {
@@ -122,6 +124,24 @@ app.get('/vaccines/search', (req, res) => {
     res.json(vaccines);
 });
 
+app.post('/event', async (req, res) => {
+    const event = req.body;
+    const eventType = event.type;
+    if (eventType === 'userRegistered') {
+        console.log(`Received event: ${eventType}`);
+        try {
+            localDB.push({
+                username: event.username,
+                vaccines: []
+            });
+        }
+        catch (err) {
+            console.error(`Error processing event '${eventType}':`, err.message);
+        }
+        res.status(200).send({ status: 'Event processed successfully.' });
+    }
+    
+});
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');

@@ -7,7 +7,7 @@ import { useNavigate, Navigate } from 'react-router-dom';
 
 export const MainPage = () => {
     const mockCompanyName = 'nomeEmpresa';
-    const mockName = 'defaultUser';
+    const username = localStorage.getItem('username') || 'defaultUser';
 
     const [searchTerm, setSearchTerm] = useState('');
     const [vacinas, setVacinas] = useState([]);
@@ -18,7 +18,7 @@ export const MainPage = () => {
             if (searchTerm.trim() !== '') {
                 try {
                     const response = await clientVaccines.get('/vaccines/search', {
-                        params: { username: mockName, vaccineName: searchTerm }
+                        params: { username: username, vaccineName: searchTerm }
                     });
                     setVacinas(response.data);
                 } catch (error) {
@@ -28,7 +28,7 @@ export const MainPage = () => {
             } else {
                 try {
                     const response = await clientVaccines.get('/vaccines', {
-                        params: { username: mockName }
+                        params: { username: username }
                     });
                     setVacinas(response.data);
                 } catch (error) {
@@ -54,7 +54,7 @@ export const MainPage = () => {
 
         try {
             const response = await clientVaccines.post('/vaccines/add', {
-                username: mockName,
+                username: username,
                 vaccine: {
                     name: novaVacina.name,
                     dose: novaVacina.dose,
@@ -71,7 +71,7 @@ export const MainPage = () => {
     const handleEdit = async (novaVacina) => {
         try {
             await clientVaccines.put(`/vaccines/update/${novaVacina.id}`, {
-                username: mockName,
+                username: username,
                 vaccineId: novaVacina.id,
                 vaccine: {
                     name: novaVacina.name,
@@ -91,7 +91,7 @@ export const MainPage = () => {
     const handleDelete = async (id) => {
         try {
             await clientVaccines.delete(`/vaccines/delete/${id}`, {
-                data: { username: mockName, vaccineId: id }
+                data: { username: username, vaccineId: id }
             });
             setVacinas(prev => prev.filter(v => v.id !== id));
         } catch (error) {
@@ -112,7 +112,7 @@ export const MainPage = () => {
 
                     {/* Avatar */}
                     <img src="https://placehold.co/120x120" alt="Avatar" className="rounded-circle mb-3" />
-                    <h5 className="text-center">{mockName}</h5>
+                    <h5 className="text-center">{username}</h5>
                     
                     {/* Botões de Navegação */}
                     <div className="d-flex flex-column flex-grow-1 mt-7 gap-2 w-100">
