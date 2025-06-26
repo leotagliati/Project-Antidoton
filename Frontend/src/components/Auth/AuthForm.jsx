@@ -8,38 +8,58 @@ const AuthForm = ({
     errorMessage,
     onLogin, onRegister
 }) => (
-    <div className="card p-4 shadow-sm">
-        <h3 className="text-center mb-4">Login</h3>
+    <div
+        className="card p-5 shadow rounded-4"
+        style={{ minWidth: 350, maxWidth: 400, width: '100%' }}
+    >
+        <h3 className="text-center mb-4 text-primary fw-bold">Bem-vindo</h3>
+        <p className="text-center text-muted mb-4" style={{ fontSize: '0.95rem' }}>
+            Acesse sua conta ou cadastre-se para começar
+        </p>
 
-        <div className="field mb-3">
-            <label className="form-label">Usuário</label>
+        <div className="field mb-4">
+            <label className="form-label fw-semibold mb-1">Usuário</label>
             <InputText
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                className="w-100"
+                className="w-100 p-inputtext-lg"
                 placeholder="Digite seu usuário"
             />
         </div>
 
         <div className="field mb-4">
-            <label className="form-label">Senha</label>
+            <label className="form-label fw-semibold mb-1">Senha</label>
             <Password
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 toggleMask
                 feedback={false}
                 required
-                className="w-100"
+                className="w-100 p-inputtext-lg"
                 placeholder="Digite sua senha"
             />
         </div>
 
-        {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
+        {errorMessage && (
+            <div className="alert alert-danger text-center py-2 small mb-4 rounded-3">
+                {errorMessage}
+            </div>
+        )}
 
-        <div className="d-flex flex-row gap-2">
-            <Button label="Entrar" icon="pi pi-sign-in" className="w-100 p-button-primary" onClick={onLogin} />
-            <Button label="Cadastrar" icon="pi pi-sign-up" className="w-100 p-button-secondary" onClick={onRegister} />
+        <div className="d-flex flex-column gap-3">
+            <Button
+                label="Entrar"
+                icon="pi pi-sign-in"
+                className="p-button-lg p-button-primary"
+                onClick={onLogin}
+            />
+            <Button
+                label="Cadastrar"
+                icon="pi pi-user-plus"
+                className="p-button-lg p-button-outlined"
+                onClick={onRegister}
+            />
         </div>
     </div>
 );
