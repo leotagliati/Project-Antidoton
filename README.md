@@ -84,7 +84,7 @@ Acesse em: [http://localhost:5173](http://localhost:5173)
 
 ---
 
-### ⚡ 4. Executar Tudo de Uma Só Vez (VSCode)
+### 4. Executar Tudo de Uma Só Vez (VSCode)
 
 Se estiver usando o VSCode, você pode executar todos os serviços simultaneamente:
 
