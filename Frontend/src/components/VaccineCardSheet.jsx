@@ -6,7 +6,7 @@ import { Column } from "primereact/column";
 import { Dropdown } from "primereact/dropdown";
 import { format } from "date-fns";
 
-function VaccineCardSheet({ vaccines, onEdit, onDelete, onAdd }) {
+function VaccineCardSheet({ vaccines, onEdit, onDelete, onAdd, availableVaccines = [] }) {
   const doseOptions = [
     { label: "1ª Dose", value: "1ª Dose" },
     { label: "2ª Dose", value: "2ª Dose" },
@@ -15,25 +15,23 @@ function VaccineCardSheet({ vaccines, onEdit, onDelete, onAdd }) {
     { label: "Reforço", value: "Reforço" },
   ];
 
+  const vaccineOptions = availableVaccines.map(vac => ({
+    label: vac.name,
+    value: vac.name,
+  }));
+
   const onRowEditComplete = (e) => {
     const { newData } = e;
     onEdit(newData);
   };
 
-  const textEditor = (options) => (
-    <InputText
-      type="text"
-      value={options.value}
-      onChange={(e) => options.editorCallback(e.target.value)}
-    />
-  );
-
-  const doseEditor = (options) => (
+  const dropdownEditor = (options, list) => (
     <Dropdown
       value={options.value}
-      options={doseOptions}
+      options={list}
       onChange={(e) => options.editorCallback(e.value)}
-      placeholder="Selecione a dose"
+      placeholder="Selecione"
+      className="w-full"
     />
   );
 
@@ -67,8 +65,16 @@ function VaccineCardSheet({ vaccines, onEdit, onDelete, onAdd }) {
         dataKey="id"
         onRowEditComplete={onRowEditComplete}
       >
-        <Column field="name" header="Vacina" editor={textEditor} />
-        <Column field="dose" header="Dose" editor={doseEditor} />
+        <Column
+          field="name"
+          header="Vacina"
+          editor={(options) => dropdownEditor(options, vaccineOptions)}
+        />
+        <Column
+          field="dose"
+          header="Dose"
+          editor={(options) => dropdownEditor(options, doseOptions)}
+        />
         <Column
           field="date"
           header="Data de Aplicação"

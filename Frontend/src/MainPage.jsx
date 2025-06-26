@@ -180,6 +180,7 @@ export const MainPage = () => {
                                 onEdit={handleEdit}
                                 onDelete={handleDelete}
                                 onAdd={handleAdd}
+                                availableVaccines={allVaccines}
                             />
                         </>
                     )}
