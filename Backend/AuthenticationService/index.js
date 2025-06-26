@@ -11,7 +11,7 @@ app.use(express.json());
 
 // Configuração do JWT
 const JWT_SECRET = 'segredo-secreto';
-const tokenExpiration = '1h'; // Tempo de expiração do token
+const tokenExpiration = '1d';
 
 
 // Banco de dados local simulado
