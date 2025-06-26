@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import { Button } from 'primereact/button';
-import clientAuth from './utils/clientAuth';
+import clientAuth from '../utils/clientAuth';
 import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {

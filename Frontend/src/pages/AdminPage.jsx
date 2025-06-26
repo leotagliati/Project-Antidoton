@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'primereact/button';
-import clientAuth from './utils/clientAuth';
-import clientVaccines from './utils/clientVaccines';
-import UsersSheet from './components/UsersSheet';
-import VaccinesSheet from './components/VaccinesSheet';
+import clientAuth from '../utils/clientAuth';
+import clientVaccines from '../utils/clientVaccines';
+import UsersSheet from '../components/UsersSheet';
+import VaccinesSheet from '../components/VaccinesSheet';
 
 export const AdminPage = () => {
     const mockCompanyName = 'nomeEmpresa';

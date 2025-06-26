@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import LoginPage from './LoginPage';
+import LoginPage from './pages/LoginPage';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import './components/datatable-grid.css'
-import { MainPage } from './MainPage';
-import { AdminPage } from './AdminPage';
+import MainPage  from './pages/MainPage';
+import AdminPage from './pages/AdminPage';
 
 
 function App() {
