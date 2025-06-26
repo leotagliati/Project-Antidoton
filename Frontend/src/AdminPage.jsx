@@ -34,26 +34,26 @@ export const AdminPage = () => {
         clientAuth.get('/users', {
             params: { isAdmin: true }
         })
-        .then(response => {
-            const usersWithRole = response.data.map(user => ({
-                ...user,
-                role: user.isAdmin ? 'admin' : 'user'
-            }));
-            setUsers(usersWithRole);
-        })
-        .catch(error => {
-            console.error('Erro ao buscar usuários:', error);
-        });
+            .then(response => {
+                const usersWithRole = response.data.map(user => ({
+                    ...user,
+                    role: user.isAdmin ? 'admin' : 'user'
+                }));
+                setUsers(usersWithRole);
+            })
+            .catch(error => {
+                console.error('Erro ao buscar usuários:', error);
+            });
     };
 
     const fetchVaccines = () => {
         clientVaccines.get('/vaccines')
-        .then(response => {
-            setVaccines(response.data);
-        })
-        .catch(error => {
-            console.error('Erro ao buscar vacinas:', error);
-        });
+            .then(response => {
+                setVaccines(response.data);
+            })
+            .catch(error => {
+                console.error('Erro ao buscar vacinas:', error);
+            });
     };
 
     const handleLogout = () => {
@@ -72,12 +72,12 @@ export const AdminPage = () => {
         clientAuth.patch(`/users/${newData.username}`, {
             role: newData.role
         })
-        .then(() => {
-            console.log(`Usuário ${newData.username} atualizado com sucesso`);
-        })
-        .catch(error => {
-            console.error(`Erro ao atualizar usuário ${newData.username}:`, error);
-        });
+            .then(() => {
+                console.log(`Usuário ${newData.username} atualizado com sucesso`);
+            })
+            .catch(error => {
+                console.error(`Erro ao atualizar usuário ${newData.username}:`, error);
+            });
     };
 
     const handleDeleteUser = (username) => {
@@ -90,13 +90,13 @@ export const AdminPage = () => {
         clientAuth.delete(`/users/${username}`, {
             params: { isAdmin }
         })
-        .then(() => {
-            setUsers(prevUsers => prevUsers.filter(user => user.username !== username));
-            console.log(`Usuário ${username} deletado com sucesso`);
-        })
-        .catch(error => {
-            console.error(`Erro ao deletar usuário ${username}:`, error);
-        });
+            .then(() => {
+                setUsers(prevUsers => prevUsers.filter(user => user.username !== username));
+                console.log(`Usuário ${username} deletado com sucesso`);
+            })
+            .catch(error => {
+                console.error(`Erro ao deletar usuário ${username}:`, error);
+            });
     };
 
     const handleAddVaccine = () => {
@@ -108,14 +108,14 @@ export const AdminPage = () => {
         clientVaccines.post('/vaccines/add', {
             name: newVaccineName
         })
-        .then(response => {
-            setVaccines(prev => [...prev, response.data]);
-            setNewVaccineName('');
-            console.log('Vacina adicionada:', response.data);
-        })
-        .catch(error => {
-            console.error('Erro ao adicionar vacina:', error);
-        });
+            .then(response => {
+                setVaccines(prev => [...prev, response.data]);
+                setNewVaccineName('');
+                console.log('Vacina adicionada:', response.data);
+            })
+            .catch(error => {
+                console.error('Erro ao adicionar vacina:', error);
+            });
     };
 
     return (
@@ -132,9 +132,20 @@ export const AdminPage = () => {
                     <h5 className="text-center">{username}</h5>
 
                     <div className="d-flex flex-column flex-grow-1 mt-7 gap-2 w-100">
-                        <Button className="p-button-secondary w-100" onClick={handleUsersButton}>Usuários Cadastrados</Button>
-                        <Button className="p-button-secondary w-100" onClick={handleVaccinesButton}>Todas as Vacinas</Button>
+                        <Button
+                            className={`p-button-secondary w-100 ${activeSheet === 'users' ? 'p-button-success' : ''}`}
+                            onClick={handleUsersButton}
+                        >
+                            Usuários Cadastrados
+                        </Button>
+                        <Button
+                            className={`p-button-secondary w-100 ${activeSheet === 'vaccines' ? 'p-button-success' : ''}`}
+                            onClick={handleVaccinesButton}
+                        >
+                            Todas as Vacinas
+                        </Button>
                     </div>
+
 
                     <Button className="p-button-danger" onClick={handleLogout}>Sair</Button>
                 </div>
