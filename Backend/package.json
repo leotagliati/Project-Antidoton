@@ -1,12 +1,12 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:searchvaccinesService": "node --watch SearchVaccineService/index.js ",
-    "start:authService": "node --watch AuthenticationService/index.js",
-    "start:eventBus": "node --watch EventBus/index.js"
+    "start:vaccinesService": "node --watch SearchVaccineService/server.js ",
+    "start:authService": "node --watch AuthenticationService/server.js",
+    "start:eventBus": "node --watch EventBus/server.js"
   },
   "keywords": [],
   "author": "",
