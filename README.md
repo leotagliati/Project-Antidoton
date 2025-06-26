@@ -36,7 +36,7 @@ Aplicação fullstack desenvolvida com React (frontend) e Node.js + Express (bac
 - React Router
 
 ### Backend
-- Node.js + Express, CORS
+- Node.js + Express
 - JWT para autenticação
 
 ---

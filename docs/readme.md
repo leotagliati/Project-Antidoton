@@ -4,9 +4,7 @@ Este diretório contém os documentos de apoio técnico do sistema, incluindo in
 
 ## Conteúdo
 
-- [Setup do Projeto](setup.md)
-- [Arquitetura do Sistema](arquitetura.md)
-- [Rotas da API - Autenticação](rotas-authentication.md)
-- [Rotas da API - Vacinação](rotas-vaccine.md)
-- [Exemplos de Chamadas de API](exemplos-chamadas.md)
-- [Decisões Arquiteturais](decisoes-arquiteturais.md)
+- [Setup do Projeto](/README.md)
+- [Rotas da API - Autenticação](/docs/AuthService/routes-desc.md)
+- [Rotas da API - Vacinação](/docs/VaccineService/routes-desc.md)
+- [Decisões Arquiteturais](arquitetura.md)
