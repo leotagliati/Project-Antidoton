@@ -28,6 +28,12 @@ const LoginPage = () => {
                 }}
             >
                 <div className="text-center mb-4">
+                    <img
+                        src="/company-icon.png"
+                        alt="Logo"
+                        className="img-fluid rounded-circle mb-3"
+                        style={{ width: '80px', boxShadow: '0 0 10px rgba(0,0,0,0.1)' }}
+                    />
                     <h2 style={{ fontWeight: '600', color: '#2c3e50' }}>Antidoton</h2>
                     <p style={{ fontSize: '0.9rem', color: '#6c757d' }}>
                         Acesso ao sistema de vacinação
