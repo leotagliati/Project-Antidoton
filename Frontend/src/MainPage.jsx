@@ -159,10 +159,10 @@ export const MainPage = () => {
 
                 {/* Conteúdo */}
                 <div className="col-md-9 p-4">
-                    <h2 className="mb-4">Dashboard</h2>
 
                     {activeSheet === 'vaccinations' && (
                         <>
+                            <h2 className="mb-4">Minhas Vacinações</h2>
                             <div className="d-flex justify-content-start mb-4">
                                 <div className="p-input-icon-left" style={{ width: '100%', maxWidth: '600px' }}>
                                     <i className="pi pi-search px-2" />
@@ -185,7 +185,10 @@ export const MainPage = () => {
                     )}
 
                     {activeSheet === 'allVaccines' && (
-                        <VaccinesSheet vaccines={allVaccines} />
+                        <>
+                            <h2 className="mb-4">Todas as Vacinas</h2>
+                            <VaccinesSheet vaccines={allVaccines} />
+                        </>
                     )}
                 </div>
             </div>
