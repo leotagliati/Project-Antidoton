@@ -29,6 +29,10 @@ const useVaccinations = (username, activeSheet, searchTerm) => {
     };
 
     useEffect(() => {
+        fetchAllVaccines();
+    }, []);
+
+    useEffect(() => {
         if (activeSheet === 'vaccinations') {
             const debounce = setTimeout(() => fetchVaccinationsByTerm(), 500);
             return () => clearTimeout(debounce);
