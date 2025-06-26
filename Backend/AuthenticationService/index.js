@@ -175,6 +175,17 @@ app.delete('/users/:username', (req, res) => {
     }
     localDB.splice(userIndex, 1);
     console.log(`User ${username} deleted successfully`);
+    const event = {
+        type: 'UserDeleted',
+        username
+    };
+    axios.post('http://localhost:3002/event', event)
+        .then(() => {
+            console.log(`Event sent: ${event.type}`);
+        })
+        .catch(err => {
+            console.error(`Error sending event: ${err.message}`);
+        });
     res.status(200).json({ message: 'User deleted successfully' });
     console.log('-----------------------------------------------------')
 });

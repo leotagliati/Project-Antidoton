@@ -210,6 +210,22 @@ app.post('/event', async (req, res) => {
         }
         res.status(200).send({ status: 'Event processed successfully.' });
     }
+    else if (eventType === 'UserDeleted') {
+        console.log(`Received event: ${eventType}`);
+        try {
+            const userIndex = localVaccinationsDB.findIndex(user => user.username === event.username);
+            if (userIndex === -1) {
+                console.error(`User ${event.username} not found`);
+                return res.status(404).send({ error: 'Usuário não encontrado' });
+            }
+            localVaccinationsDB.splice(userIndex, 1);
+            console.log(`User ${event.username} deleted successfully`);
+        }
+        catch (err) {
+            console.error(`Error processing event '${eventType}':`, err.message);
+        }
+        res.status(200).send({ status: 'Event processed successfully.' });
+    }
     else {
         console.log(`No handler for event type: ${eventType}`);
         res.status(400).send({ error: 'Event type not supported' });

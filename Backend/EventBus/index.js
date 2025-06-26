@@ -11,6 +11,7 @@ const services = {
 const eventRoutes = {
     UserRegistered: [{ service: 'searchVaccinesService' }],
     UserLogged: [{ service: 'searchVaccinesService' }],
+    UserDeleted: [{ service: 'searchVaccinesService' }],
 };
 
 app.post('/event', async (req, res) => {
