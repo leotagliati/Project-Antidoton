@@ -14,6 +14,7 @@ function App() {
           <Route path="/dashboard" element={<MainPage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/" element={<LoginPage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
