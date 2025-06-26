@@ -21,7 +21,16 @@ const LoginPage = () => {
         clientAuth.post('/auth/login', { username, password })
             .then(response => {
                 console.log('Login bem-sucedido:', response.data);
-                navigate('/dashboard', { replace: true });
+                localStorage.setItem('username', username);
+
+                if (response.data.user.isAdmin) {
+                    localStorage.setItem('isAdmin', 'true');
+                    navigate('/admin', { replace: true });
+                }
+                else {
+                    localStorage.setItem('isAdmin', 'false');
+                    navigate('/dashboard', { replace: true });
+                }
             })
             .catch(error => {
                 console.error('Erro ao fazer login:', error);
@@ -42,6 +51,7 @@ const LoginPage = () => {
         clientAuth.post('/auth/register', { username, password })
             .then(response => {
                 console.log('Cadastro bem-sucedido:', response.data);
+                localStorage.setItem('username', username);
                 navigate('/dashboard', { replace: true });
             })
             .catch(error => {
