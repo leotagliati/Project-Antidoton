@@ -12,23 +12,24 @@ const LoginPage = () => {
     const [errorMessage, setErrorMessage] = useState('');
 
     const handleSignIn = (e) => {
-        e.preventDefault()
-        setErrorMessage('')
+        e.preventDefault();
+        setErrorMessage('');
         if (!username || !password) {
             setErrorMessage('Usuário e senha são obrigatórios');
             return;
         }
+
         clientAuth.post('/auth/login', { username, password })
             .then(response => {
-                console.log('Login bem-sucedido:', response.data);
-                localStorage.setItem('username', username);
+                const { token, user } = response.data;
 
-                if (response.data.user.isAdmin) {
-                    localStorage.setItem('isAdmin', 'true');
+                localStorage.setItem('token', token);
+                localStorage.setItem('username', user.username);
+                localStorage.setItem('isAdmin', user.isAdmin ? 'true' : 'false');
+
+                if (user.isAdmin) {
                     navigate('/admin', { replace: true });
-                }
-                else {
-                    localStorage.setItem('isAdmin', 'false');
+                } else {
                     navigate('/dashboard', { replace: true });
                 }
             })
@@ -41,18 +42,28 @@ const LoginPage = () => {
                 }
             });
     };
+
     const handleSignUp = (e) => {
         e.preventDefault();
-        setErrorMessage('')
+        setErrorMessage('');
         if (!username || !password) {
             setErrorMessage('Usuário e senha são obrigatórios');
             return;
         }
+
         clientAuth.post('/auth/register', { username, password })
             .then(response => {
-                console.log('Cadastro bem-sucedido:', response.data);
-                localStorage.setItem('username', username);
-                navigate('/dashboard', { replace: true });
+                const { token, user } = response.data;
+
+                localStorage.setItem('token', token);
+                localStorage.setItem('username', user.username);
+                localStorage.setItem('isAdmin', user.isAdmin ? 'true' : 'false');
+
+                if (user.isAdmin) {
+                    navigate('/admin', { replace: true });
+                } else {
+                    navigate('/dashboard', { replace: true });
+                }
             })
             .catch(error => {
                 if (error.response && error.response.status === 400) {
@@ -68,6 +79,7 @@ const LoginPage = () => {
         <div className="container d-flex justify-content-center align-items-center vh-100">
             <div className="card p-4 shadow-sm">
                 <h3 className="text-center mb-4">Login</h3>
+
                 <div className="field mb-3">
                     <label className="form-label">Usuário</label>
                     <InputText
@@ -91,7 +103,9 @@ const LoginPage = () => {
                         className="w-100"
                     />
                 </div>
+
                 {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
+
                 <div className='d-flex flex-row gap-2'>
                     <Button label="Entrar" icon="pi pi-sign-in" className="w-100 p-button-primary" onClick={handleSignIn} />
                     <Button label="Cadastrar" icon="pi pi-sign-up" className="w-100 p-button-primary" onClick={handleSignUp} />

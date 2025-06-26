@@ -1,12 +1,18 @@
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const saltRounds = 10;
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Configuração do JWT
+const JWT_SECRET = 'segredo-secreto';
+const tokenExpiration = '1d';
+
 
 // Banco de dados local simulado
 const localDB = [
@@ -31,7 +37,7 @@ function logUser(username, password) {
             if (!result) return reject({ status: 401, message: 'Invalid password' });
 
             console.log(`User ${username} logged in successfully`);
-            resolve({ username: user.username , isAdmin: user.isAdmin });
+            resolve({ username: user.username, isAdmin: user.isAdmin });
         });
     });
 }
@@ -51,7 +57,7 @@ function registerUser(username, password) {
                 id: localDB.length + 1,
                 username,
                 password: hashedPassword,
-                isAdmin: false 
+                isAdmin: false
             };
 
             localDB.push(newUser);
@@ -63,7 +69,6 @@ function registerUser(username, password) {
 
 // Rota de login
 app.post('/auth/login', (req, res) => {
-    console.log('-----------------------------------------------------')
     const { username, password } = req.body;
 
     if (!username || !password) {
@@ -72,21 +77,26 @@ app.post('/auth/login', (req, res) => {
 
     logUser(username, password)
         .then(user => {
+            const token = jwt.sign(
+                { username: user.username, isAdmin: user.isAdmin },
+                JWT_SECRET,
+                { expiresIn: tokenExpiration }
+            );
+
             const event = {
                 type: 'UserLogged',
                 username: user.username
             };
-            return axios.post('http://localhost:3002/event', event)
-                .then(() => {
-                    console.log(`Event sent: ${event.type}`);
-                    res.status(200).json({ message: 'Login successful', user });
-                });
+
+            return axios.post('http://localhost:3002/event', event).then(() => {
+                console.log(`Event sent: ${event.type}`);
+                res.status(200).json({ message: 'Login successful', token, user });
+            });
         })
         .catch(err => {
             console.error(`Login error: ${err.message}`);
             res.status(err.status || 500).json({ error: err.message });
         });
-    console.log('-----------------------------------------------------')
 });
 
 // Rota de registro
@@ -107,7 +117,8 @@ app.post('/auth/register', (req, res) => {
             return axios.post('http://localhost:3002/event', event)
                 .then(() => {
                     console.log(`Event sent: ${event.type}`);
-                    res.status(201).json({ message: 'User registered successfully', user });
+                    const token = jwt.sign({ username: user.username }, JWT_SECRET, { expiresIn: '1d' });
+                    res.status(201).json({ message: 'User registered successfully', token, user });
                 });
         })
         .catch(err => {
@@ -135,8 +146,7 @@ app.patch('/users/:username', (req, res) => {
     console.log('-----------------------------------------------------')
     const { username } = req.params;
     const { role } = req.body;
-    if(role === 'admin')
-    {
+    if (role === 'admin') {
         const user = localDB.find(user => user.username === username);
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
@@ -145,8 +155,7 @@ app.patch('/users/:username', (req, res) => {
         console.log(`User ${username} updated to admin`);
         res.status(200).json({ message: 'User updated successfully', user });
     }
-    else if(role === 'user')
-    {
+    else if (role === 'user') {
         const user = localDB.find(user => user.username === username);
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
