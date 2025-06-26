@@ -65,7 +65,14 @@ const MainPage = () => {
     };
 
     return (
-        <div className="container-fluid">
+        <div
+            className="container-fluid"
+            style={{
+                background: '#f8fafc',
+                minHeight: '100vh',
+                padding: 0,
+            }}
+        >
             <div className="row">
                 <Sidebar
                     username={username}
@@ -81,19 +88,40 @@ const MainPage = () => {
                     onLogout={handleLogout}
                 />
 
-                <div className="col-md-9 p-4">
+                <div
+                    className="col p-5"
+                    style={{
+                        background: '#ffffff',
+                        borderTopLeftRadius: '1rem',
+                        borderBottomLeftRadius: '1rem',
+                        boxShadow: '0 0 10px rgba(0, 0, 0, 0.05)',
+                    }}
+                >
                     {activeSheet === 'vaccinations' && (
                         <>
-                            <h2 className="mb-4">Minhas Vacinações</h2>
-                            <div className="d-flex justify-content-start mb-4">
-                                <div className="p-input-icon-left" style={{ width: '100%', maxWidth: '600px' }}>
-                                    <i className="pi pi-search px-2" />
-                                    <InputText
-                                        placeholder="Buscar vacina"
-                                        className="px-5 w-100"
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                    />
+                            <h2 style={{ color: '#2c3e50', fontWeight: 600 }} className="mb-4">
+                                Minhas Vacinações
+                            </h2>
+
+                            <div className="p-4 bg-white rounded-md shadow-md">
+                                <div className="mb-3 p-input-icon-left" style={{ maxWidth: 300 }}>
+                                    <div
+                                        className="p-input-icon-left"
+                                        style={{ width: '100%', maxWidth: '600px' }}
+                                    >
+                                        <i className="pi pi-search px-2" />
+                                        <InputText
+                                            placeholder="Buscar vacina"
+                                            className="px-5 w-100"
+                                            style={{
+                                                borderRadius: '8px',
+                                                borderColor: '#ced4da',
+                                                padding: '0.75rem',
+                                            }}
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                        />
+                                    </div>
                                 </div>
                             </div>
 
@@ -109,7 +137,9 @@ const MainPage = () => {
 
                     {activeSheet === 'allVaccines' && (
                         <>
-                            <h2 className="mb-4">Todas as Vacinas</h2>
+                            <h2 style={{ color: '#2c3e50', fontWeight: 600 }} className="mb-4">
+                                Todas as Vacinas
+                            </h2>
                             <VaccinesSheet vaccines={allVaccines} />
                         </>
                     )}

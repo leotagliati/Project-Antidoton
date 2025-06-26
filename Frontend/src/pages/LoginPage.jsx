@@ -1,115 +1,62 @@
 import React, { useState } from 'react';
-import { InputText } from 'primereact/inputtext';
-import { Password } from 'primereact/password';
-import { Button } from 'primereact/button';
-import clientAuth from '../utils/clientAuth';
-import { useNavigate } from 'react-router-dom';
+import AuthForm from '../components/Auth/AuthForm';
+import useAuth from '../hooks/useAuth';
 
 const LoginPage = () => {
-    const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const handleSignIn = (e) => {
-        e.preventDefault();
-        setErrorMessage('');
-        if (!username || !password) {
-            setErrorMessage('Usuário e senha são obrigatórios');
-            return;
-        }
-
-        clientAuth.post('/auth/login', { username, password })
-            .then(response => {
-                const { token, user } = response.data;
-
-                localStorage.setItem('token', token);
-                localStorage.setItem('username', user.username);
-                localStorage.setItem('isAdmin', user.isAdmin ? 'true' : 'false');
-
-                if (user.isAdmin) {
-                    navigate('/admin', { replace: true });
-                } else {
-                    navigate('/dashboard', { replace: true });
-                }
-            })
-            .catch(error => {
-                console.error('Erro ao fazer login:', error);
-                if (error.response && error.response.status === 401) {
-                    setErrorMessage('Usuário ou senha inválidos');
-                } else {
-                    setErrorMessage('Erro ao fazer login, tente novamente mais tarde');
-                }
-            });
-    };
-
-    const handleSignUp = (e) => {
-        e.preventDefault();
-        setErrorMessage('');
-        if (!username || !password) {
-            setErrorMessage('Usuário e senha são obrigatórios');
-            return;
-        }
-
-        clientAuth.post('/auth/register', { username, password })
-            .then(response => {
-                const { token, user } = response.data;
-
-                localStorage.setItem('token', token);
-                localStorage.setItem('username', user.username);
-                localStorage.setItem('isAdmin', user.isAdmin ? 'true' : 'false');
-
-                if (user.isAdmin) {
-                    navigate('/admin', { replace: true });
-                } else {
-                    navigate('/dashboard', { replace: true });
-                }
-            })
-            .catch(error => {
-                if (error.response && error.response.status === 400) {
-                    setErrorMessage('Usuário já existe');
-                } else {
-                    setErrorMessage('Erro ao fazer cadastro, tente novamente mais tarde');
-                }
-                console.error('Erro ao fazer cadastro:', error);
-            });
-    };
+    const { login, register } = useAuth(setErrorMessage);
 
     return (
-        <div className="container d-flex justify-content-center align-items-center vh-100">
-            <div className="card p-4 shadow-sm">
-                <h3 className="text-center mb-4">Login</h3>
-
-                <div className="field mb-3">
-                    <label className="form-label">Usuário</label>
-                    <InputText
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                        className="w-100"
-                        placeholder="Digite seu usuário"
+        <div
+            className="container-fluid d-flex justify-content-center align-items-center vh-100"
+            style={{
+                background: '#f0f4f8',
+                padding: '1rem',
+            }}
+        >
+            <div
+                style={{
+                    background: '#ffffff',
+                    borderRadius: '1rem',
+                    padding: '2rem',
+                    width: '100%',
+                    height: '100%',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                }}
+            >
+                <div className="text-center mb-4">
+                    <img
+                        src="/company-icon.png"
+                        alt="Logo"
+                        className="img-fluid rounded-circle mb-3"
+                        style={{ width: '80px', boxShadow: '0 0 10px rgba(0,0,0,0.1)' }}
+                    />
+                    <h2 style={{ fontWeight: '600', color: '#2c3e50' }}>Antidoton</h2>
+                    <p style={{ fontSize: '0.9rem', color: '#6c757d' }}>
+                        Acesso ao sistema de vacinação
+                    </p>
+                </div>
+                <div className="d-flex justify-content-center align-items-center flex-column">
+                    <AuthForm
+                        username={username}
+                        password={password}
+                        setUsername={setUsername}
+                        setPassword={setPassword}
+                        errorMessage={errorMessage}
+                        onLogin={() => login(username, password)}
+                        onRegister={() => register(username, password)}
                     />
                 </div>
 
-                <div className="field mb-4">
-                    <label htmlFor="password" className="form-label">Senha</label>
-                    <Password
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        toggleMask
-                        feedback={false}
-                        required
-                        placeholder="Digite sua senha"
-                        className="w-100"
-                    />
-                </div>
-
-                {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
-
-                <div className='d-flex flex-row gap-2'>
-                    <Button label="Entrar" icon="pi pi-sign-in" className="w-100 p-button-primary" onClick={handleSignIn} />
-                    <Button label="Cadastrar" icon="pi pi-sign-up" className="w-100 p-button-primary" onClick={handleSignUp} />
-                </div>
+                <p
+                    className="text-center mt-4"
+                    style={{ fontSize: '0.8rem', color: '#adb5bd' }}
+                >
+                    © 2025 Antidoton. Todos os direitos reservados.
+                </p>
             </div>
         </div>
     );
